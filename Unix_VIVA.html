@@ -1,0 +1,1912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNIX Lab — Step-by-Step Cheat Sheet | SE IT APSIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b0f0c;
+  --surface: #0f1510;
+  --surface2: #141c16;
+  --surface3: #1a2320;
+  --border: #1e2e24;
+  --border2: #2a3f30;
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.08);
+  --green-border: rgba(34,197,94,0.2);
+  --teal: #2dd4bf;
+  --teal-dim: rgba(45,212,191,0.08);
+  --yellow: #facc15;
+  --yellow-dim: rgba(250,204,21,0.08);
+  --red: #f87171;
+  --red-dim: rgba(248,113,113,0.08);
+  --orange: #fb923c;
+  --orange-dim: rgba(251,146,60,0.08);
+  --purple: #c084fc;
+  --text: #d4e8d9;
+  --text2: #8faa96;
+  --text3: #4f6b55;
+  --mono: 'Fira Code', monospace;
+  --head: 'Outfit', sans-serif;
+  --r: 4px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:var(--head); font-size:14.5px; line-height:1.7; }
+
+/* ── HERO ── */
+.hero { background: linear-gradient(160deg,#0b1a0f,#060e07); border-bottom:2px solid var(--green); padding:48px 24px 40px; text-align:center; }
+.prompt { font-family:var(--mono); font-size:11px; color:var(--text3); margin-bottom:16px; }
+.prompt span { color:var(--green); }
+.hero h1 { font-size:clamp(28px,5vw,52px); font-weight:800; color:#fff; letter-spacing:-0.02em; line-height:1.05; margin-bottom:8px; }
+.hero h1 em { font-style:normal; color:#4ade80; }
+.hero p { color:var(--text2); font-size:13.5px; max-width:560px; margin:0 auto 24px; }
+.hero-grid { display:inline-grid; grid-template-columns:repeat(4,1fr); border:1px solid var(--border2); }
+.hc { padding:12px 20px; border-right:1px solid var(--border2); text-align:center; }
+.hc:last-child { border-right:none; }
+.hc-n { font-family:var(--mono); font-size:18px; font-weight:600; color:var(--green); }
+.hc-l { font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text3); }
+
+/* ── TOPBAR ── */
+.topbar { position:sticky; top:0; z-index:100; background:rgba(11,15,12,0.96); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:10px 20px; }
+.topbar-inner { max-width:980px; margin:0 auto; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.sw { flex:1; min-width:160px; position:relative; }
+.sw input { width:100%; background:var(--surface2); border:1px solid var(--border2); color:var(--text); font-family:var(--mono); font-size:12px; padding:7px 12px 7px 28px; border-radius:var(--r); outline:none; }
+.sw input:focus { border-color:var(--green); }
+.sw input::placeholder { color:var(--text3); }
+.si { position:absolute; left:9px; top:50%; transform:translateY(-50%); color:var(--text3); font-size:12px; }
+.tb { background:var(--surface2); border:1px solid var(--border2); color:var(--text2); font-family:var(--mono); font-size:10px; letter-spacing:0.05em; padding:6px 12px; border-radius:var(--r); cursor:pointer; transition:all .15s; white-space:nowrap; }
+.tb:hover, .tb.active { background:var(--green); border-color:var(--green); color:#000; font-weight:700; }
+.tb.f-b.active { background:var(--teal); border-color:var(--teal); color:#000; }
+.tb.f-i.active { background:var(--yellow); border-color:var(--yellow); color:#000; }
+.tb.f-a.active { background:var(--red); border-color:var(--red); color:#000; }
+.vsep { width:1px; height:26px; background:var(--border2); }
+
+/* ── MAIN ── */
+.main { max-width:980px; margin:0 auto; padding:28px 20px 80px; }
+
+/* ── EXP HEADER ── */
+.exp { margin-bottom:44px; }
+.exp.hidden { display:none; }
+.exp-hd { display:flex; align-items:stretch; border:1px solid var(--border2); background:var(--surface); margin-bottom:14px; overflow:hidden; }
+.exp-no { background:var(--green); color:#000; font-family:var(--mono); font-weight:700; font-size:12px; min-width:54px; display:flex; align-items:center; justify-content:center; }
+.exp-info { padding:12px 16px; }
+.exp-title { font-size:15px; font-weight:700; color:#fff; margin-bottom:4px; }
+.exp-aim { font-size:12px; color:var(--text2); font-family:var(--mono); }
+
+/* ── CHEAT SHEET PANEL ── */
+.cs-btn { display:inline-flex; align-items:center; gap:8px; background:rgba(250,204,21,0.06); border:1px solid rgba(250,204,21,0.3); color:var(--yellow); font-family:var(--head); font-size:12px; font-weight:600; padding:8px 16px; border-radius:var(--r); cursor:pointer; margin-bottom:12px; transition:all .2s; }
+.cs-btn:hover { background:rgba(250,204,21,0.15); }
+.cs-btn .arr { transition:transform .2s; }
+.cs-btn.open-btn .arr { transform:rotate(90deg); }
+
+.cs-panel { display:none; margin-bottom:16px; }
+.cs-panel.open { display:block; }
+
+/* Card-style step sheet */
+.step-header {
+  background: linear-gradient(135deg, #0d1f10 0%, #0a1a0d 100%);
+  border:1px solid var(--green-border);
+  border-bottom:none;
+  padding:12px 18px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border-radius:var(--r) var(--r) 0 0;
+}
+.step-header-icon { font-size:18px; }
+.step-header-title { font-size:13px; font-weight:700; color:var(--green); }
+.step-header-sub { font-size:11px; color:var(--text3); font-family:var(--mono); }
+
+.steps-wrap {
+  border:1px solid var(--green-border);
+  border-radius:0 0 var(--r) var(--r);
+  overflow:hidden;
+}
+
+.step-row {
+  display:grid;
+  grid-template-columns:40px 1fr;
+  border-bottom:1px solid var(--border);
+}
+.step-row:last-child { border-bottom:none; }
+.step-num {
+  background:var(--surface2);
+  border-right:1px solid var(--border);
+  display:flex; align-items:flex-start; justify-content:center;
+  padding-top:14px;
+  font-family:var(--mono);
+  font-size:11px;
+  font-weight:700;
+  color:var(--green);
+}
+.step-body { padding:12px 14px; background:var(--surface); }
+.step-what {
+  font-size:12.5px; font-weight:700; color:var(--text);
+  margin-bottom:4px;
+  display:flex; align-items:center; gap:6px;
+}
+.step-what .badge { font-size:9px; font-weight:700; font-family:var(--mono); letter-spacing:0.08em; padding:1px 6px; border-radius:2px; }
+.type-badge { background:rgba(34,197,94,0.15); color:var(--green); border:1px solid var(--green-border); }
+.see-badge { background:rgba(45,212,191,0.12); color:var(--teal); border:1px solid rgba(45,212,191,0.3); }
+.warn-badge { background:rgba(250,204,21,0.12); color:var(--yellow); border:1px solid rgba(250,204,21,0.3); }
+.step-cmd {
+  font-family:var(--mono);
+  font-size:12px;
+  background:#000;
+  border:1px solid var(--border2);
+  border-left:3px solid var(--green);
+  padding:8px 12px;
+  color:#a8d4b0;
+  border-radius:0 var(--r) var(--r) 0;
+  margin:5px 0;
+  overflow-x:auto;
+  white-space:pre;
+}
+.step-cmd .g { color:#4ade80; }
+.step-cmd .y { color:var(--yellow); }
+.step-cmd .c { color:var(--text3); font-style:normal; }
+.step-cmd .t { color:var(--teal); }
+.step-cmd .r { color:var(--red); }
+.step-cmd .o { color:var(--orange); }
+.step-note { font-size:12px; color:var(--text2); margin-top:4px; line-height:1.5; }
+.step-note strong { color:var(--text); }
+.step-note code { font-family:var(--mono); font-size:11px; background:var(--surface3); border:1px solid var(--border2); padding:0 5px; color:var(--teal); border-radius:2px; }
+.step-note em { color:var(--yellow); font-style:normal; }
+.step-output {
+  font-family:var(--mono);
+  font-size:11.5px;
+  background:#040805;
+  border:1px dashed var(--border2);
+  padding:8px 12px;
+  color:var(--text2);
+  border-radius:var(--r);
+  margin:5px 0;
+  overflow-x:auto;
+  white-space:pre;
+}
+
+/* Sub-sections inside step sheet */
+.cs-sub {
+  background: rgba(34,197,94,0.04);
+  border:1px solid var(--green-border);
+  border-left:3px solid var(--green);
+  padding:10px 14px;
+  margin:8px 0 0;
+  border-radius:0 var(--r) var(--r) 0;
+}
+.cs-sub-title { font-size:9px; letter-spacing:0.15em; text-transform:uppercase; color:var(--green); font-weight:700; margin-bottom:6px; }
+.cs-row { display:flex; gap:12px; margin-bottom:3px; align-items:flex-start; }
+.cs-cmd { font-family:var(--mono); font-size:11.5px; color:var(--teal); flex-shrink:0; min-width:200px; }
+.cs-desc { font-size:12px; color:var(--text2); }
+.cs-warn { background:rgba(248,113,113,0.07); border:1px solid rgba(248,113,113,0.25); padding:8px 12px; border-radius:var(--r); font-size:12px; color:var(--red); margin:8px 0; }
+.cs-tip { background:var(--green-dim); border:1px solid var(--green-border); padding:8px 12px; border-radius:var(--r); font-size:12px; color:var(--green); margin:8px 0; }
+.cs-tip span, .cs-warn span { color:var(--text2); }
+
+/* ── Q&A ── */
+.qa { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); margin-bottom:6px; }
+.qa.hidden { display:none; }
+.qa.open { border-color:var(--green-border); }
+.qa-q { display:flex; align-items:flex-start; gap:10px; padding:12px 14px; cursor:pointer; user-select:none; }
+.qa-q:hover { background:rgba(255,255,255,0.015); }
+.lvl { font-family:var(--mono); font-size:8.5px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:2px 8px; border-radius:2px; flex-shrink:0; margin-top:2px; border:1px solid; }
+.basic .lvl { border-color:rgba(45,212,191,.35); color:var(--teal); background:var(--teal-dim); }
+.intermediate .lvl { border-color:rgba(250,204,21,.3); color:var(--yellow); background:var(--yellow-dim); }
+.advanced .lvl { border-color:rgba(248,113,113,.3); color:var(--red); background:var(--red-dim); }
+.qa-qt { flex:1; font-size:14px; font-weight:500; color:#e0ede4; line-height:1.5; }
+.chev { color:var(--text3); font-size:16px; flex-shrink:0; transition:transform .2s; }
+.qa.open .chev { transform:rotate(90deg); color:var(--green); }
+.qa-a { display:none; padding:0 14px 14px; border-top:1px solid var(--border); }
+.qa.open .qa-a { display:block; }
+.qa-body { padding-top:12px; font-size:13.5px; color:var(--text2); line-height:1.75; }
+.qa-body p { margin-bottom:8px; }
+.qa-body p:last-child { margin-bottom:0; }
+.qa-body strong { color:var(--text); }
+code { font-family:var(--mono); font-size:12px; background:var(--surface3); border:1px solid var(--border2); padding:0 5px; border-radius:2px; color:var(--teal); }
+pre { font-family:var(--mono); font-size:12px; background:#000; border:1px solid var(--border2); border-left:3px solid var(--green); padding:12px 14px; border-radius:0 var(--r) var(--r) 0; overflow-x:auto; color:#9fc9a5; margin:10px 0; line-height:1.65; }
+pre .g { color:#4ade80; } pre .y { color:var(--yellow); } pre .c { color:var(--text3); } pre .t { color:var(--teal); } pre .r { color:var(--red); } pre .o { color:var(--orange); }
+.tbl { overflow-x:auto; margin:10px 0; }
+table { border-collapse:collapse; width:100%; font-size:13px; }
+th { background:var(--surface3); color:var(--green); font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; padding:7px 12px; border:1px solid var(--border2); text-align:left; }
+td { padding:6px 12px; border:1px solid var(--border); color:var(--text2); font-size:13px; }
+tr:nth-child(even) td { background:rgba(255,255,255,0.015); }
+.tip-box { background:var(--green-dim); border-left:3px solid var(--green); padding:9px 12px; border-radius:0 var(--r) var(--r) 0; margin:10px 0; font-size:13px; color:var(--green); }
+.tip-box span, .warn-box span { color:var(--text2); }
+.warn-box { background:rgba(250,204,21,0.06); border-left:3px solid var(--yellow); padding:9px 12px; border-radius:0 var(--r) var(--r) 0; margin:10px 0; font-size:13px; color:var(--yellow); }
+
+#no-results { display:none; text-align:center; padding:60px 20px; color:var(--text3); font-family:var(--mono); font-size:13px; }
+.footer { border-top:1px solid var(--border); padding:18px; text-align:center; font-family:var(--mono); font-size:10px; color:var(--text3); letter-spacing:0.08em; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="prompt"><span>student@apsit:~$</span> cat unix_cheatsheet_beginner.html</div>
+  <h1>UNIX Lab — <em>Step-by-Step</em><br>Cheat Sheets</h1>
+  <p>Each cheat sheet tells you <strong>exactly what to type</strong>, what you'll see on screen, and what it means — even if you've never touched Linux before.</p>
+  <div class="hero-grid">
+    <div class="hc"><div class="hc-n">12</div><div class="hc-l">Experiments</div></div>
+    <div class="hc"><div class="hc-n">Step-by-Step</div><div class="hc-l">Each Sheet</div></div>
+    <div class="hc"><div class="hc-n">100+</div><div class="hc-l">Q&amp;As</div></div>
+    <div class="hc"><div class="hc-n">Beginner</div><div class="hc-l">Friendly</div></div>
+  </div>
+</div>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="sw"><span class="si">⌕</span><input type="text" id="srch" placeholder="Search questions..." oninput="filterAll()"></div>
+    <button class="tb active" onclick="setF('all',this)">ALL</button>
+    <div class="vsep"></div>
+    <button class="tb f-b" onclick="setF('basic',this)">🟢 BASIC</button>
+    <button class="tb f-i" onclick="setF('intermediate',this)">🟡 MID</button>
+    <button class="tb f-a" onclick="setF('advanced',this)">🔴 ADV</button>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ════════════════ EXP 1 ════════════════ -->
+<div class="exp" id="e1">
+  <div class="exp-hd">
+    <div class="exp-no">EXP 01</div>
+    <div class="exp-info">
+      <div class="exp-title">Install Linux (Ubuntu) using VirtualBox</div>
+      <div class="exp-aim">Aim: Install Ubuntu OS as a virtual machine and study Linux features</div>
+    </div>
+  </div>
+
+  <button class="cs-btn" onclick="toggleCS(this)"><span>📋</span> Step-by-Step Cheat Sheet <span class="arr">›</span></button>
+  <div class="cs-panel">
+    <div class="step-header">
+      <span class="step-header-icon">💻</span>
+      <div>
+        <div class="step-header-title">How to install Ubuntu in VirtualBox</div>
+        <div class="step-header-sub">What the exam will ask you: explain the installation steps or architecture</div>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">DOWNLOAD</span> Get the Ubuntu ISO file</div>
+          <div class="step-note">Go to <strong>ubuntu.com/download/desktop</strong> → download the .iso file. This is like a CD image of the OS installer. Save it somewhere you'll find it.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">VIRTUALBOX</span> Create a new virtual machine</div>
+          <div class="step-note">Open VirtualBox → Click <strong>New</strong> → Fill in:<br>
+          • Name: <em>Ubuntu</em> &nbsp;|&nbsp; Type: <em>Linux</em> &nbsp;|&nbsp; Version: <em>Ubuntu (64-bit)</em><br>
+          • RAM: give it half your physical RAM (e.g., 2GB if you have 4GB)<br>
+          • Hard disk: Create VDI → Dynamically allocated → <strong>minimum 25GB</strong></div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">ATTACH ISO</span> Put the ISO into the virtual CD drive</div>
+          <div class="step-note">Settings → Storage → Click <em>"Empty"</em> under Controller: IDE → Click the disc icon on the right → Choose your .iso file</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">START</span> Boot and install Ubuntu</div>
+          <div class="step-note">Click <strong>Start</strong> → The VM boots from the ISO → Choose <em>Install Ubuntu</em> → Follow on-screen prompts → When asked about disk, choose <em>"Erase disk and install Ubuntu"</em> (don't worry — it erases the VIRTUAL disk, not your real laptop!)</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge see-badge">RESULT</span> Ubuntu is now installed inside VirtualBox</div>
+          <div class="step-note">After install, remove the ISO (Storage settings → remove disc) and restart the VM. You'll see Ubuntu's desktop. Open Terminal with <strong>Ctrl+Alt+T</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="cs-sub" style="margin-top:10px;">
+      <div class="cs-sub-title">Linux Architecture — Draw This if Asked</div>
+      <div class="step-cmd">Your App (vi, browser, script)
+        ↓ talks to
+Shell (bash — reads your commands)
+        ↓ passes to
+Kernel (core OS — manages CPU, RAM, disk)
+        ↓ controls
+Hardware (your actual computer)</div>
+    </div>
+  </div>
+
+  <div class="qa basic" data-t="what is virtualbox virtual machine host guest os">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">BASIC</span><span class="qa-qt">What is VirtualBox? What is the difference between host OS and guest OS?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p><strong>VirtualBox</strong> is a free program that lets you run a whole operating system inside a window on your computer — like a computer inside a computer.</p>
+      <p><strong>Host OS</strong> = the OS on your actual laptop (e.g., Windows or macOS). It runs VirtualBox.<br><strong>Guest OS</strong> = the OS running inside VirtualBox (Ubuntu in our case).</p>
+      <div class="tip-box">⚡ <span>Why use a VM? Safe to experiment. If you break Ubuntu, just delete it and reinstall. Your Windows/Mac is untouched.</span></div>
+    </div></div>
+  </div>
+  <div class="qa basic" data-t="linux features multiuser multitasking kernel shell">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">BASIC</span><span class="qa-qt">Name 4 important features of the Linux operating system.</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <div class="tbl"><table>
+        <tr><th>Feature</th><th>What it means</th></tr>
+        <tr><td>Multi-user</td><td>Many users can use the same Linux machine at the same time</td></tr>
+        <tr><td>Multi-tasking</td><td>Many programs can run at the same time</td></tr>
+        <tr><td>Open Source</td><td>Source code is free — anyone can read, modify, share it</td></tr>
+        <tr><td>Secure</td><td>Strong permission system — users can only access their own files</td></tr>
+        <tr><td>Portable</td><td>Runs on almost any hardware — phones (Android), servers, supercomputers</td></tr>
+      </table></div>
+    </div></div>
+  </div>
+  <div class="qa intermediate" data-t="linux architecture layers kernel shell application hardware">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">INTERMEDIATE</span><span class="qa-qt">Explain the architecture of Linux. What does the Kernel do?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p>Linux has 4 layers stacked on top of each other:</p>
+      <p><strong>1. Hardware</strong> — Physical computer: CPU, RAM, hard disk.<br>
+      <strong>2. Kernel</strong> — The brain of the OS. Directly controls hardware. Manages processes, memory, files, devices. You never interact with the kernel directly.<br>
+      <strong>3. Shell</strong> — The translator. Takes commands you type (like <code>ls</code>) and tells the kernel what to do. Bash is the most common shell.<br>
+      <strong>4. User Applications</strong> — Programs you actually use: text editor, browser, your shell scripts.</p>
+    </div></div>
+  </div>
+</div>
+
+<!-- ════════════════ EXP 2A ════════════════ -->
+<div class="exp" id="e2a">
+  <div class="exp-hd">
+    <div class="exp-no">EXP 2A</div>
+    <div class="exp-info">
+      <div class="exp-title">General Purpose Utility Commands</div>
+      <div class="exp-aim">Aim: Run and understand basic Linux utility commands</div>
+    </div>
+  </div>
+
+  <button class="cs-btn" onclick="toggleCS(this)"><span>📋</span> Step-by-Step Cheat Sheet <span class="arr">›</span></button>
+  <div class="cs-panel">
+    <div class="step-header">
+      <span class="step-header-icon">🖥️</span>
+      <div>
+        <div class="step-header-title">How to do Exp 2A in the practical</div>
+        <div class="step-header-sub">Open Terminal first (Ctrl+Alt+T), then type each command below</div>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">TYPE</span> Find out who you are</div>
+          <div class="step-cmd">whoami</div>
+          <div class="step-output">student</div>
+          <div class="step-note">Prints your <strong>username</strong>. Simple as that.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">TYPE</span> Find where you are in the file system</div>
+          <div class="step-cmd">pwd</div>
+          <div class="step-output">/home/student</div>
+          <div class="step-note"><strong>pwd = Print Working Directory</strong>. Shows your current location. Like GPS for the terminal.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">TYPE</span> See today's date and time</div>
+          <div class="step-cmd">date</div>
+          <div class="step-output">Sun Apr 20 10:30:45 IST 2025</div>
+          <div class="step-note">Shows system date and time. Use <code>date +"%d/%m/%Y"</code> for DD/MM/YYYY format.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">TYPE</span> Print text on screen</div>
+          <div class="step-cmd">echo "Hello APSIT"</div>
+          <div class="step-output">Hello APSIT</div>
+          <div class="step-note">echo just prints whatever you put in quotes. Used a lot in scripts.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">TYPE</span> View a file's contents</div>
+          <div class="step-cmd">cat /etc/hostname</div>
+          <div class="step-output">apsit-lab</div>
+          <div class="step-note">cat shows file contents. Try <code>cat /etc/os-release</code> to see Ubuntu version info.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">TYPE</span> Test network connection</div>
+          <div class="step-cmd">ping -c 4 google.com</div>
+          <div class="step-output">64 bytes from ... time=12.3 ms</div>
+          <div class="step-note"><code>-c 4</code> means send 4 packets then stop. Without <code>-c</code> it runs forever — press <strong>Ctrl+C</strong> to stop.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">7</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">TYPE</span> See help for any command</div>
+          <div class="step-cmd">man ls</div>
+          <div class="step-note">Opens manual page for the <code>ls</code> command. Press <strong>q</strong> to quit the manual. Works for every command: <code>man ping</code>, <code>man date</code>, etc.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">8</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">TYPE</span> See your previous commands</div>
+          <div class="step-cmd">history</div>
+          <div class="step-note">Lists all commands you typed before. Press <strong>↑ arrow</strong> key to go through them one by one.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa basic" data-t="man command help manual page quit q">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">BASIC</span><span class="qa-qt">What is the <code>man</code> command? How do you exit it?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p><code>man ls</code> opens the full manual (help page) for the <code>ls</code> command. It shows every option, what each flag does, and examples.</p>
+      <p>Press <strong>q</strong> to quit. Press <strong>/ then type a word</strong> to search within the manual. Press <strong>n</strong> for next match.</p>
+    </div></div>
+  </div>
+  <div class="qa basic" data-t="echo print text variable dollar sign">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">BASIC</span><span class="qa-qt">What does <code>echo</code> do? What is the difference between <code>echo $USER</code> and <code>echo '$USER'</code>?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p><code>echo</code> just prints text to the screen. It's the Linux version of <code>print()</code>.</p>
+<pre>echo "Hello"        <span class="c"># prints: Hello</span>
+echo $USER          <span class="c"># prints your username (expands the variable)</span>
+echo '$USER'        <span class="c"># prints: $USER (single quotes = taken literally)</span></pre>
+      <p>Double quotes allow variables to expand. Single quotes treat everything as plain text.</p>
+    </div></div>
+  </div>
+  <div class="qa intermediate" data-t="uptime cal id which command">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">INTERMEDIATE</span><span class="qa-qt">What do <code>uptime</code>, <code>id</code>, and <code>which</code> commands do?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p><code>uptime</code> — shows how long the system has been running since last boot, and current load.</p>
+      <p><code>id</code> — shows your UID (user ID number), GID (group ID), and which groups you belong to.</p>
+      <p><code>which python3</code> — shows the full path to where a command is stored on disk. Useful when you have multiple versions installed.</p>
+    </div></div>
+  </div>
+</div>
+
+<!-- ════════════════ EXP 2B ════════════════ -->
+<div class="exp" id="e2b">
+  <div class="exp-hd">
+    <div class="exp-no">EXP 2B</div>
+    <div class="exp-info">
+      <div class="exp-title">Vi / Vim Editor</div>
+      <div class="exp-aim">Aim: Create, edit, and save files using the vi text editor</div>
+    </div>
+  </div>
+
+  <button class="cs-btn" onclick="toggleCS(this)"><span>📋</span> Step-by-Step Cheat Sheet <span class="arr">›</span></button>
+  <div class="cs-panel">
+    <div class="step-header">
+      <span class="step-header-icon">📝</span>
+      <div>
+        <div class="step-header-title">How to use Vi in the practical</div>
+        <div class="step-header-sub">Vi has 3 modes — understanding this is everything</div>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">OPEN</span> Open a file in vi</div>
+          <div class="step-cmd">vi myfile.txt</div>
+          <div class="step-note">You are now in <strong>NORMAL mode</strong> (default). The cursor blinks but nothing you type appears as text yet. Keys are commands here, not letters.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">TYPE</span> Start typing text → press i first</div>
+          <div class="step-cmd">i</div>
+          <div class="step-note">Pressing <code>i</code> switches to <strong>INSERT mode</strong>. You'll see <em>-- INSERT --</em> at the bottom. Now type whatever you want. This is the only mode where your text actually appears.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge warn-badge">IMPORTANT</span> Go back to Normal mode when done typing</div>
+          <div class="step-cmd">Esc</div>
+          <div class="step-note">Press the <strong>Esc key</strong>. The <em>-- INSERT --</em> at the bottom disappears. You are back in Normal mode. <em>Press Esc whenever you are confused or stuck.</em></div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">SAVE + QUIT</span> Save your file and exit</div>
+          <div class="step-cmd">:wq</div>
+          <div class="step-note">Make sure you're in Normal mode (press Esc first), then type <code>:wq</code> and press Enter. <strong>:w</strong> = write (save), <strong>:q</strong> = quit. This is what you'll use 95% of the time.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge warn-badge">EXIT WITHOUT SAVING</span> Made a mistake? Exit without saving</div>
+          <div class="step-cmd">:q!</div>
+          <div class="step-note">The <code>!</code> means "force". This quits WITHOUT saving any changes. Your file goes back to how it was before.</div>
+        </div>
+      </div>
+    </div>
+    <div class="cs-sub" style="margin-top:10px;">
+      <div class="cs-sub-title">Quick Reference — Essential Vi Keys (all in Normal mode after pressing Esc)</div>
+      <div class="cs-row"><span class="cs-cmd">i</span><span class="cs-desc">→ INSERT mode (type text before cursor)</span></div>
+      <div class="cs-row"><span class="cs-cmd">a</span><span class="cs-desc">→ INSERT mode (type text AFTER cursor)</span></div>
+      <div class="cs-row"><span class="cs-cmd">o</span><span class="cs-desc">→ INSERT mode on a NEW line below</span></div>
+      <div class="cs-row"><span class="cs-cmd">dd</span><span class="cs-desc">Delete entire current line</span></div>
+      <div class="cs-row"><span class="cs-cmd">yy then p</span><span class="cs-desc">Copy (yank) current line, then Paste below</span></div>
+      <div class="cs-row"><span class="cs-cmd">u</span><span class="cs-desc">Undo last action</span></div>
+      <div class="cs-row"><span class="cs-cmd">:5</span><span class="cs-desc">Jump to line number 5</span></div>
+      <div class="cs-row"><span class="cs-cmd">/word + Enter</span><span class="cs-desc">Search for "word" (press n for next match)</span></div>
+      <div class="cs-row"><span class="cs-cmd">:%s/old/new/g</span><span class="cs-desc">Replace ALL "old" with "new" in the file</span></div>
+      <div class="cs-warn">⚠ Most common mistake: you start typing but letters are doing strange things (deleting, moving cursor). This means you're in NORMAL mode. Just press <strong>Esc</strong> then <strong>i</strong> to get back to INSERT mode.</div>
+    </div>
+  </div>
+
+  <div class="qa basic" data-t="vi 3 modes normal insert command last line">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">BASIC</span><span class="qa-qt">What are the 3 modes of the vi editor? How do you switch between them?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <div class="tbl"><table>
+        <tr><th>Mode</th><th>How to enter</th><th>What you can do</th></tr>
+        <tr><td>Normal</td><td>Default / Press Esc</td><td>Navigate, delete, copy — keyboard keys are commands</td></tr>
+        <tr><td>Insert</td><td>Press i (or a, o)</td><td>Type and edit text like a normal editor</td></tr>
+        <tr><td>Command (Last Line)</td><td>Press : from Normal</td><td>:w save, :q quit, :wq save+quit, :q! force quit</td></tr>
+      </table></div>
+      <div class="tip-box">⚡ <span>If you are lost in vi: press <strong>Esc</strong> multiple times until you're in Normal mode, then type <strong>:wq</strong> to save and exit safely.</span></div>
+    </div></div>
+  </div>
+  <div class="qa intermediate" data-t="vi replace word sed substitute global :%s">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">INTERMEDIATE</span><span class="qa-qt">How do you replace every occurrence of the word "linux" with "LINUX" in vi?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+<pre>:%s/linux/LINUX/g</pre>
+      <p>Breakdown: <code>:</code> = enter command mode | <code>%</code> = all lines | <code>s</code> = substitute | <code>/linux/</code> = find this | <code>/LINUX/</code> = replace with this | <code>/g</code> = global (all occurrences on each line)</p>
+      <p>Without <code>%</code> it only works on current line. Without <code>g</code> it only replaces the first match per line.</p>
+    </div></div>
+  </div>
+</div>
+
+<!-- ════════════════ EXP 3B ════════════════ -->
+<div class="exp" id="e3b">
+  <div class="exp-hd">
+    <div class="exp-no">EXP 3B</div>
+    <div class="exp-info">
+      <div class="exp-title">File System Management Commands</div>
+      <div class="exp-aim">Aim: Create, copy, move, delete files and directories; use grep, sort, wc, pipe</div>
+    </div>
+  </div>
+
+  <button class="cs-btn" onclick="toggleCS(this)"><span>📋</span> Step-by-Step Cheat Sheet <span class="arr">›</span></button>
+  <div class="cs-panel">
+    <div class="step-header">
+      <span class="step-header-icon">📁</span>
+      <div>
+        <div class="step-header-title">File management — type these in the terminal</div>
+        <div class="step-header-sub">Each command is followed by what you'll see on screen</div>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">CREATE</span> Make a new directory and go into it</div>
+          <div class="step-cmd">mkdir myproject
+cd myproject
+pwd</div>
+          <div class="step-output">/home/student/myproject</div>
+          <div class="step-note"><code>mkdir</code> = make directory. <code>cd</code> = change directory (move into it). <code>pwd</code> confirms where you are now.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">CREATE FILE</span> Create a file with some text</div>
+          <div class="step-cmd">echo "mango apple banana mango" > fruits.txt
+cat fruits.txt</div>
+          <div class="step-output">mango apple banana mango</div>
+          <div class="step-note"><code>&gt;</code> redirects the output into a file (creates it). <code>cat</code> shows the file's contents.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">LIST</span> See files in the folder</div>
+          <div class="step-cmd">ls
+ls -l</div>
+          <div class="step-output">fruits.txt
+-rw-r--r-- 1 student student 25 Apr20 fruits.txt</div>
+          <div class="step-note"><code>ls</code> = list. <code>ls -l</code> = long format showing permissions, size, date. <code>ls -la</code> also shows hidden files.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">COPY / MOVE</span> Copy and rename a file</div>
+          <div class="step-cmd">cp fruits.txt fruits_backup.txt
+mv fruits_backup.txt foods.txt
+ls</div>
+          <div class="step-output">foods.txt  fruits.txt</div>
+          <div class="step-note"><code>cp</code> copies. <code>mv</code> moves OR renames (here it renamed from fruits_backup.txt to foods.txt).</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">COUNT</span> Count lines, words, characters</div>
+          <div class="step-cmd">wc fruits.txt</div>
+          <div class="step-output">1  4  25  fruits.txt</div>
+          <div class="step-note">Output = <strong>lines</strong> | <strong>words</strong> | <strong>bytes</strong> | filename. Use <code>wc -l</code> for lines only, <code>wc -w</code> for words only, <code>wc -c</code> for characters.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">SEARCH + PIPE</span> Search for a word using grep and pipe</div>
+          <div class="step-cmd">grep "mango" fruits.txt
+cat fruits.txt | grep "mango"</div>
+          <div class="step-output">mango apple banana mango</div>
+          <div class="step-note">Both commands do the same thing. The <code>|</code> (pipe) sends the output of <code>cat</code> as input to <code>grep</code>. Pipes let you chain commands.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">7</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">SORT + TRANSFORM</span> Sort and convert case</div>
+          <div class="step-cmd">sort fruits.txt
+cat fruits.txt | tr 'a-z' 'A-Z'</div>
+          <div class="step-output">apple banana mango mango
+MANGO APPLE BANANA MANGO</div>
+          <div class="step-note"><code>sort</code> arranges lines alphabetically. <code>tr 'a-z' 'A-Z'</code> translates (converts) lowercase to uppercase.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">8</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge warn-badge">DANGER</span> Delete a file (permanent!)</div>
+          <div class="step-cmd">rm foods.txt</div>
+          <div class="step-note"><strong>No Recycle Bin in Linux.</strong> Once deleted, it's gone forever. Use <code>rm -r foldername</code> to delete a folder and everything inside it.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa basic" data-t="ls -l output permissions read write execute fields">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">BASIC</span><span class="qa-qt">What do the letters like <code>rw-r--r--</code> mean in <code>ls -l</code> output?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p>It shows who can do what with the file. There are 3 groups of 3 letters each:</p>
+<pre>-  rw-  r--  r--
+↑   ↑    ↑    ↑
+|  Owner Group Others
+File type (- = file, d = directory)</pre>
+      <p>Each group: <strong>r</strong> = read | <strong>w</strong> = write | <strong>x</strong> = execute | <strong>-</strong> = not allowed</p>
+      <p>So <code>rw-r--r--</code> means: Owner can read+write. Group can only read. Others can only read.</p>
+    </div></div>
+  </div>
+  <div class="qa basic" data-t="pipe what is | connect commands output input chain">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">BASIC</span><span class="qa-qt">What is a pipe <code>|</code>? Give a real example.</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p>A <strong>pipe</strong> takes the output of one command and feeds it as input to the next command. Like a water pipe — output flows through to the next stage.</p>
+<pre>ls -l | grep ".txt"      <span class="c"># list files, then keep only .txt ones</span>
+cat file.txt | wc -l     <span class="c"># show file, then count the lines</span>
+cat file.txt | sort | uniq  <span class="c"># show → sort → remove duplicates</span></pre>
+    </div></div>
+  </div>
+  <div class="qa intermediate" data-t="chmod permission 755 644 octal number execute">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">INTERMEDIATE</span><span class="qa-qt">What does <code>chmod 755 script.sh</code> do?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p>chmod changes file permissions using numbers. r=4, w=2, x=1. Add them up for each group.</p>
+<pre>chmod 755 script.sh
+<span class="c">7 = 4+2+1 = rwx  → Owner: read, write, execute</span>
+<span class="c">5 = 4+0+1 = r-x  → Group: read, execute</span>
+<span class="c">5 = 4+0+1 = r-x  → Others: read, execute</span>
+
+chmod +x script.sh  <span class="c"># simpler: just add execute for everyone</span></pre>
+      <div class="tip-box">⚡ <span>You MUST run <code>chmod +x script.sh</code> before running any shell script. Otherwise you get "Permission denied".</span></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ════════════════ EXP 3C ════════════════ -->
+<div class="exp" id="e3c">
+  <div class="exp-hd">
+    <div class="exp-no">EXP 3C</div>
+    <div class="exp-info">
+      <div class="exp-title">Compression &amp; Archiving — tar, gzip, zip</div>
+      <div class="exp-aim">Aim: Compress and archive files using tar, gzip, bzip2, zip</div>
+    </div>
+  </div>
+
+  <button class="cs-btn" onclick="toggleCS(this)"><span>📋</span> Step-by-Step Cheat Sheet <span class="arr">›</span></button>
+  <div class="cs-panel">
+    <div class="step-header">
+      <span class="step-header-icon">🗜️</span>
+      <div>
+        <div class="step-header-title">Compress and extract files — step by step</div>
+        <div class="step-header-sub">First create some test files, then practice archiving them</div>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">SETUP</span> Create some test files to work with</div>
+          <div class="step-cmd">mkdir testfolder
+echo "File one" > testfolder/a.txt
+echo "File two" > testfolder/b.txt
+echo "File three" > testfolder/c.txt</div>
+          <div class="step-note">Now you have a folder with 3 files to practice archiving.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">ZIP</span> Zip the folder (Windows-compatible)</div>
+          <div class="step-cmd">zip -r myarchive.zip testfolder/
+ls -lh myarchive.zip</div>
+          <div class="step-note"><code>-r</code> means recursive (include all files inside the folder). <code>ls -lh</code> shows the file size in human-readable format so you can see it got smaller.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">UNZIP</span> Extract a zip file</div>
+          <div class="step-cmd">unzip myarchive.zip -d extracted/
+ls extracted/</div>
+          <div class="step-note"><code>-d</code> specifies the destination folder. Without <code>-d</code> it extracts into current directory.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">GZIP</span> Compress a single file with gzip</div>
+          <div class="step-cmd">cp testfolder/a.txt .
+gzip a.txt
+ls</div>
+          <div class="step-output">a.txt.gz  (a.txt is GONE — replaced by a.txt.gz)</div>
+          <div class="step-note"><strong>Important:</strong> gzip deletes the original and creates a .gz file. To get it back: <code>gunzip a.txt.gz</code></div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">TAR</span> Create a .tar.gz archive (most common in Linux)</div>
+          <div class="step-cmd">tar -cvzf backup.tar.gz testfolder/</div>
+          <div class="step-output">testfolder/
+testfolder/a.txt
+testfolder/b.txt
+testfolder/c.txt</div>
+          <div class="step-note">Flags: <code>c</code>=create, <code>v</code>=verbose (show files), <code>z</code>=compress with gzip, <code>f</code>=filename. The output shows each file being added.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">TAR EXTRACT</span> Extract a .tar.gz archive</div>
+          <div class="step-cmd">tar -xvzf backup.tar.gz</div>
+          <div class="step-note">Change <code>c</code> to <code>x</code> — that's the only difference between create and extract. To list contents without extracting: <code>tar -tvzf backup.tar.gz</code></div>
+        </div>
+      </div>
+    </div>
+    <div class="cs-sub" style="margin-top:10px;">
+      <div class="cs-sub-title">Memory trick for tar flags</div>
+      <div class="step-cmd"><span class="g">c</span>reate  <span class="y">v</span>erbose  <span class="t">z</span>ip(gzip)  <span class="o">f</span>ilename  ←  Create .tar.gz
+e<span class="g">x</span>tract  <span class="y">v</span>erbose  <span class="t">z</span>ip(gzip)  <span class="o">f</span>ilename  ←  Extract .tar.gz</div>
+    </div>
+  </div>
+
+  <div class="qa basic" data-t="difference archive compress tar gzip both together">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">BASIC</span><span class="qa-qt">What is the difference between archiving and compression? Why do we use both together?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p><strong>Archiving</strong> = bundling many files into ONE file (like putting them in a bag). No size reduction. <code>tar</code> does this.<br><strong>Compression</strong> = making the file smaller using math. <code>gzip</code>, <code>bzip2</code>, <code>zip</code> do this.</p>
+      <p>We use both together with <code>tar -czf archive.tar.gz folder/</code> because tar bundles everything first, then gzip shrinks the bundle.</p>
+    </div></div>
+  </div>
+  <div class="qa intermediate" data-t="gzip delete original file behaviour keep -k gunzip decompress">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">INTERMEDIATE</span><span class="qa-qt">What happens to the original file when you run <code>gzip file.txt</code>?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p>The original file is <strong>deleted</strong>. Only the compressed <code>file.txt.gz</code> remains. This is different from zip which keeps the original.</p>
+<pre>gzip file.txt        <span class="c"># file.txt → DELETED, file.txt.gz created</span>
+gzip -k file.txt     <span class="c"># KEEP original (both exist after)</span>
+gunzip file.txt.gz   <span class="c"># .gz deleted, original file.txt restored</span></pre>
+    </div></div>
+  </div>
+</div>
+
+<!-- ════════════════ EXP 4 ════════════════ -->
+<div class="exp" id="e4">
+  <div class="exp-hd">
+    <div class="exp-no">EXP 04</div>
+    <div class="exp-info">
+      <div class="exp-title">User Management Commands</div>
+      <div class="exp-aim">Aim: Add, delete, and manage users and groups in Linux</div>
+    </div>
+  </div>
+
+  <button class="cs-btn" onclick="toggleCS(this)"><span>📋</span> Step-by-Step Cheat Sheet <span class="arr">›</span></button>
+  <div class="cs-panel">
+    <div class="step-header">
+      <span class="step-header-icon">👤</span>
+      <div>
+        <div class="step-header-title">Managing users — step by step</div>
+        <div class="step-header-sub">Most commands need sudo (admin privileges)</div>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">CHECK</span> See who is logged in</div>
+          <div class="step-cmd">whoami
+who
+w</div>
+          <div class="step-note"><code>whoami</code> = just your name. <code>who</code> = all logged-in users. <code>w</code> = all users + what they are doing.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">ADD USER</span> Create a new user called "john"</div>
+          <div class="step-cmd">sudo useradd -m john
+sudo passwd john</div>
+          <div class="step-note"><code>-m</code> creates a home folder at /home/john. After <code>sudo passwd john</code>, you'll be asked to type a new password for john twice.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">SWITCH USER</span> Log in as john</div>
+          <div class="step-cmd">su john
+whoami
+exit</div>
+          <div class="step-output">john</div>
+          <div class="step-note"><code>su</code> = switch user. Type john's password. <code>whoami</code> now shows "john". <code>exit</code> goes back to your original user.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">GROUPS</span> Create a group and add john to it</div>
+          <div class="step-cmd">sudo groupadd developers
+sudo usermod -aG developers john
+groups john</div>
+          <div class="step-output">john : john developers</div>
+          <div class="step-note"><code>-aG</code> = append to Group (don't remove from existing groups). <code>groups john</code> confirms john is now in the developers group.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">OWNERSHIP</span> Change who owns a file</div>
+          <div class="step-cmd">touch report.txt
+sudo chown john report.txt
+ls -l report.txt</div>
+          <div class="step-output">-rw-r--r-- 1 john student 0 Apr20 report.txt</div>
+          <div class="step-note">The owner changed from "student" to "john". Now only john (and root) can modify it.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">DELETE USER</span> Remove the user john</div>
+          <div class="step-cmd">sudo userdel -r john</div>
+          <div class="step-note"><code>-r</code> = remove home directory too. Without <code>-r</code>, the account is deleted but /home/john remains.</div>
+        </div>
+      </div>
+    </div>
+    <div class="cs-sub" style="margin-top:10px;">
+      <div class="cs-sub-title">Key files — examiner often asks "where is this stored?"</div>
+      <div class="cs-row"><span class="cs-cmd">cat /etc/passwd</span><span class="cs-desc">All users listed here (username:x:UID:GID:name:home:shell)</span></div>
+      <div class="cs-row"><span class="cs-cmd">cat /etc/group</span><span class="cs-desc">All groups and their members</span></div>
+      <div class="cs-row"><span class="cs-cmd">cat /etc/shadow</span><span class="cs-desc">Encrypted passwords (only root can read)</span></div>
+    </div>
+  </div>
+
+  <div class="qa basic" data-t="sudo su difference admin root command privilege">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">BASIC</span><span class="qa-qt">What is the difference between <code>sudo</code> and <code>su</code>?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <div class="tbl"><table>
+        <tr><th>Command</th><th>What it does</th><th>Password</th></tr>
+        <tr><td><code>sudo cmd</code></td><td>Run ONE command as admin (root), then back to normal</td><td>Your own password</td></tr>
+        <tr><td><code>su john</code></td><td>Completely switch to user john's shell session</td><td>John's password</td></tr>
+        <tr><td><code>sudo su</code></td><td>Become the root user permanently in this session</td><td>Your own password</td></tr>
+      </table></div>
+      <p>Think of <code>sudo</code> like "run this one task as admin". Think of <code>su</code> like "actually become that user".</p>
+    </div></div>
+  </div>
+  <div class="qa intermediate" data-t="/etc/passwd file format fields uid gid home shell">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">INTERMEDIATE</span><span class="qa-qt">Explain the format of the <code>/etc/passwd</code> file. What does each field mean?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+<pre>john:x:1001:1001:John Doe:/home/john:/bin/bash</pre>
+      <div class="tbl"><table>
+        <tr><th>Part</th><th>Meaning</th></tr>
+        <tr><td>john</td><td>Username</td></tr>
+        <tr><td>x</td><td>Password (stored encrypted in /etc/shadow)</td></tr>
+        <tr><td>1001</td><td>User ID (UID). Root=0, System users=1-999, Regular users=1000+</td></tr>
+        <tr><td>1001</td><td>Group ID (GID) — primary group</td></tr>
+        <tr><td>John Doe</td><td>Full name (description)</td></tr>
+        <tr><td>/home/john</td><td>Home directory</td></tr>
+        <tr><td>/bin/bash</td><td>Default shell</td></tr>
+      </table></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ════════════════ EXP 5 ════════════════ -->
+<div class="exp" id="e5">
+  <div class="exp-hd">
+    <div class="exp-no">EXP 05</div>
+    <div class="exp-info">
+      <div class="exp-title">Process Management Commands</div>
+      <div class="exp-aim">Aim: View, control, and kill running processes; use fg, bg, nice</div>
+    </div>
+  </div>
+
+  <button class="cs-btn" onclick="toggleCS(this)"><span>📋</span> Step-by-Step Cheat Sheet <span class="arr">›</span></button>
+  <div class="cs-panel">
+    <div class="step-header">
+      <span class="step-header-icon">⚙️</span>
+      <div>
+        <div class="step-header-title">Process management — step by step</div>
+        <div class="step-header-sub">A "process" is just a running program. Every command you run creates a process.</div>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">VIEW</span> See all running processes</div>
+          <div class="step-cmd">ps
+ps aux</div>
+          <div class="step-output">USER    PID  %CPU %MEM  ...  COMMAND
+student 1234   0.0  0.1  ...  bash</div>
+          <div class="step-note"><code>ps</code> shows just your current processes. <code>ps aux</code> shows ALL processes from ALL users. The <strong>PID</strong> (Process ID) is the unique number for each process.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">LIVE VIEW</span> Watch processes updating live</div>
+          <div class="step-cmd">top</div>
+          <div class="step-note">Shows real-time CPU and memory usage. Press <strong>q</strong> to quit. Shows which processes are using the most resources at the top. Press <strong>k</strong> then type a PID to kill a process from inside top.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">BACKGROUND</span> Run a process in the background</div>
+          <div class="step-cmd">sleep 60 &
+jobs</div>
+          <div class="step-output">[1] 5678
+[1]+ Running   sleep 60 &</div>
+          <div class="step-note">The <code>&</code> at the end sends the process to the background. Your terminal is free to use. <code>jobs</code> shows background tasks. The [1] is the job number.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">SUSPEND + BG</span> Pause a foreground process then resume it in background</div>
+          <div class="step-cmd">sleep 100
+<span class="c">(now press Ctrl+Z)</span>
+bg</div>
+          <div class="step-output">[1]+ Stopped   sleep 100
+[1]+ sleep 100 &</div>
+          <div class="step-note"><strong>Ctrl+Z</strong> suspends (pauses) the process. Then <code>bg</code> sends it to background to continue running. <code>fg</code> brings it back to foreground.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">KILL</span> Stop a running process</div>
+          <div class="step-cmd">ps aux | grep sleep
+kill 5678</div>
+          <div class="step-note">Find the PID with <code>ps aux | grep processname</code>, then <code>kill PID</code>. If it doesn't stop: <code>kill -9 PID</code> (force kill — cannot be ignored).</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">NICE</span> Start a process with lower priority</div>
+          <div class="step-cmd">nice -n 10 sleep 100 &
+ps aux | grep sleep</div>
+          <div class="step-note">Priority range: <strong>-20</strong> (most CPU) to <strong>+19</strong> (least CPU). Setting +10 means this process yields to others. Good for long background tasks like backups.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa basic" data-t="process PID what is foreground background job">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">BASIC</span><span class="qa-qt">What is a process? What is a PID?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p>A <strong>process</strong> is a program that is currently running. Every time you type a command, Linux creates a process to run it. Multiple copies of the same program can run at the same time — each is a separate process.</p>
+      <p><strong>PID</strong> = Process ID. Every process gets a unique number. Use this number to identify and control the process (kill it, change its priority, etc.).</p>
+    </div></div>
+  </div>
+  <div class="qa intermediate" data-t="kill -9 SIGKILL SIGTERM difference force graceful signal">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">INTERMEDIATE</span><span class="qa-qt">What is the difference between <code>kill 1234</code> and <code>kill -9 1234</code>?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p><code>kill 1234</code> sends signal 15 (SIGTERM) — politely asks the process to stop. The process can save its work and shut down cleanly. It can even ignore this signal.</p>
+      <p><code>kill -9 1234</code> sends signal 9 (SIGKILL) — the kernel immediately destroys the process. No cleanup, no saving. The process cannot ignore or block this.</p>
+      <div class="warn-box">⚠ <span>Always try regular <code>kill</code> first. Only use <code>-9</code> if the process is frozen and not responding.</span></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ════════════════ EXP 6 ════════════════ -->
+<div class="exp" id="e6">
+  <div class="exp-hd">
+    <div class="exp-no">EXP 06</div>
+    <div class="exp-info">
+      <div class="exp-title">Memory Management Commands</div>
+      <div class="exp-aim">Aim: Check RAM usage, disk space, and virtual memory statistics</div>
+    </div>
+  </div>
+
+  <button class="cs-btn" onclick="toggleCS(this)"><span>📋</span> Step-by-Step Cheat Sheet <span class="arr">›</span></button>
+  <div class="cs-panel">
+    <div class="step-header">
+      <span class="step-header-icon">🧠</span>
+      <div>
+        <div class="step-header-title">Check memory and disk — step by step</div>
+        <div class="step-header-sub">Run each command and understand what each line of output means</div>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">RAM</span> Check how much memory is in use</div>
+          <div class="step-cmd">free -h</div>
+          <div class="step-output">             total    used    free   shared  buff/cache  available
+Mem:          7.7G    2.1G    1.2G    0.3G       4.4G       5.1G
+Swap:         2.0G    0.0G    2.0G</div>
+          <div class="step-note"><strong>Mem row</strong> = physical RAM. <strong>Swap row</strong> = virtual RAM (disk used as extra RAM). The <strong>available</strong> column tells you how much free RAM your programs can actually use right now.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">DISK SPACE</span> See how full each hard disk partition is</div>
+          <div class="step-cmd">df -h</div>
+          <div class="step-output">Filesystem   Size  Used  Avail  Use%  Mounted on
+/dev/sda1     50G   12G    35G   26%   /</div>
+          <div class="step-note"><code>df</code> = Disk Filesystem. The <strong>Use%</strong> column is the key one — if it hits 95%+ the system has problems. <code>-h</code> shows GB/MB instead of confusing byte counts.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">FOLDER SIZE</span> Find out how big a specific folder is</div>
+          <div class="step-cmd">du -sh /home/student/
+du -sh *</div>
+          <div class="step-output">45M  /home/student/</div>
+          <div class="step-note"><code>du</code> = Disk Usage. <code>-s</code> = summary (one total, not every file). <code>-h</code> = human readable. <code>*</code> shows size of each item in current folder.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">DETAILED RAM</span> See detailed memory info from the kernel</div>
+          <div class="step-cmd">cat /proc/meminfo | head -10</div>
+          <div class="step-output">MemTotal:       8058944 kB
+MemFree:        1234567 kB
+MemAvailable:   5678901 kB ...</div>
+          <div class="step-note"><code>/proc/meminfo</code> is a special virtual file the kernel creates to show live memory data. <code>head -10</code> shows just the first 10 lines (it's a long file).</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">VMSTAT</span> See CPU, memory, and I/O statistics together</div>
+          <div class="step-cmd">vmstat</div>
+          <div class="step-output">procs  memory       swap  io   system  cpu
+r  b  swpd  free  buff  cache  si  so  bi  bo  in  cs  us sy id wa</div>
+          <div class="step-note">vmstat gives a one-line snapshot of everything. Key columns: <strong>free</strong>=free RAM, <strong>us</strong>=user CPU%, <strong>sy</strong>=system CPU%, <strong>id</strong>=idle CPU%.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa basic" data-t="free -h RAM swap memory difference output">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">BASIC</span><span class="qa-qt">What is swap memory? Why is it needed?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p><strong>Swap</strong> is a portion of the hard disk that Linux uses as extra RAM when physical RAM runs out. When RAM is full, the OS moves less-used data to the swap space to make room for new data.</p>
+      <p>The problem: hard disks are <strong>100x slower than RAM</strong>. So when swap is being used heavily, the system becomes very slow (you'll hear the disk clicking and everything freezes).</p>
+      <p>Think of RAM as your desk and swap as a drawer — when the desk is full you put things in the drawer, but getting them back takes longer.</p>
+    </div></div>
+  </div>
+  <div class="qa basic" data-t="df du difference disk filesystem usage">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">BASIC</span><span class="qa-qt">What is the difference between <code>df</code> and <code>du</code>?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p><code>df</code> (Disk Filesystem) shows how full each partition/drive is overall — like checking the total capacity of your hard drive.</p>
+      <p><code>du</code> (Disk Usage) shows how much space specific files and folders are taking — like checking how much space one folder is using.</p>
+      <div class="tip-box">⚡ <span>Practical use: <code>df -h</code> tells you IF disk is almost full. Then <code>du -sh * | sort -h</code> tells you WHICH folder is eating all the space.</span></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ════════════════ EXP 7 ════════════════ -->
+<div class="exp" id="e7">
+  <div class="exp-hd">
+    <div class="exp-no">EXP 07</div>
+    <div class="exp-info">
+      <div class="exp-title">Basic Shell Scripting</div>
+      <div class="exp-aim">Aim: Write scripts for arithmetic, simple interest, and largest of 3 numbers</div>
+    </div>
+  </div>
+
+  <button class="cs-btn" onclick="toggleCS(this)"><span>📋</span> Step-by-Step Cheat Sheet <span class="arr">›</span></button>
+  <div class="cs-panel">
+    <div class="step-header">
+      <span class="step-header-icon">🔧</span>
+      <div>
+        <div class="step-header-title">Write and run your first shell scripts</div>
+        <div class="step-header-sub">Every script follows the same 3 steps: Write it → Make it executable → Run it</div>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">ALWAYS DO FIRST</span> The 3 steps to create any script</div>
+          <div class="step-cmd"><span class="c">Step A: Open vi and write the script</span>
+vi myscript.sh
+
+<span class="c">Step B: Make it executable</span>
+chmod +x myscript.sh
+
+<span class="c">Step C: Run it</span>
+./myscript.sh</div>
+          <div class="step-note">You need <code>chmod +x</code> only once per file. After that, <code>./myscript.sh</code> runs it every time.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">SCRIPT 1</span> Arithmetic operations</div>
+          <div class="step-cmd"><span class="g">#!/bin/bash</span>
+<span class="c"># Every script starts with this line</span>
+read -p "Enter two numbers: " a b
+
+echo "Addition     : $((a + b))"
+echo "Subtraction  : $((a - b))"
+echo "Multiplication: $((a * b))"
+echo "Division     : $((a / b))"
+echo "Remainder    : $((a % b))"</div>
+          <div class="step-note">The shebang <code>#!/bin/bash</code> MUST be the first line. <code>$((...))</code> is how bash does math. <code>read -p "text" var</code> shows a prompt and stores input in var.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">SCRIPT 2</span> Simple Interest calculator</div>
+          <div class="step-cmd"><span class="g">#!/bin/bash</span>
+read -p "Enter Principal: " p
+read -p "Enter Rate (%): " r
+read -p "Enter Time (years): " t
+
+si=$(( (p * r * t) / 100 ))
+echo "Simple Interest = $si"</div>
+          <div class="step-note">Formula: SI = (P × R × T) / 100. Variables have no spaces around = sign. Access with $ before the name.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">SCRIPT 3</span> Largest of 3 numbers</div>
+          <div class="step-cmd"><span class="g">#!/bin/bash</span>
+read -p "Enter 3 numbers: " a b c
+
+if [ $a -gt $b ] && [ $a -gt $c ]; then
+  echo "Largest: $a"
+elif [ $b -gt $c ]; then
+  echo "Largest: $b"
+else
+  echo "Largest: $c"
+fi</div>
+          <div class="step-note">Comparison operators: <code>-gt</code>=greater than, <code>-lt</code>=less than, <code>-eq</code>=equal, <code>-ne</code>=not equal. Conditions go inside <code>[ ]</code> with spaces.</div>
+        </div>
+      </div>
+    </div>
+    <div class="cs-sub" style="margin-top:10px;">
+      <div class="cs-sub-title">Common mistakes beginners make</div>
+      <div class="cs-warn">❌ <span><code>x = 5</code> WRONG — spaces around = cause an error. Correct: <code>x=5</code></span></div>
+      <div class="cs-warn">❌ <span><code>echo x + y</code> WRONG — won't add. Correct: <code>echo $((x + y))</code></span></div>
+      <div class="cs-warn">❌ <span><code>if [$a -gt $b]</code> WRONG — must have spaces inside brackets. Correct: <code>if [ $a -gt $b ]</code></span></div>
+    </div>
+  </div>
+
+  <div class="qa basic" data-t="shebang #!/bin/bash first line script interpreter">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">BASIC</span><span class="qa-qt">What is the shebang line <code>#!/bin/bash</code>? Why must it be the first line?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p><code>#!</code> (called "shebang" or "hashbang") tells the OS <em>which program to use</em> to run this script. <code>/bin/bash</code> is the path to the bash shell.</p>
+      <p>When you run <code>./script.sh</code>, the OS reads the first two bytes. If it sees <code>#!</code>, it sends the rest of the script to the specified interpreter. Without this line, the OS might use the wrong shell and your script could fail.</p>
+    </div></div>
+  </div>
+  <div class="qa intermediate" data-t="if else elif condition operators -gt -lt -eq bash comparison">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">INTERMEDIATE</span><span class="qa-qt">What are the comparison operators for numbers in bash? How do they differ from math symbols?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <div class="tbl"><table>
+        <tr><th>Math symbol</th><th>Bash operator</th><th>Meaning</th></tr>
+        <tr><td>&gt;</td><td>-gt</td><td>greater than</td></tr>
+        <tr><td>&lt;</td><td>-lt</td><td>less than</td></tr>
+        <tr><td>&gt;=</td><td>-ge</td><td>greater than or equal</td></tr>
+        <tr><td>&lt;=</td><td>-le</td><td>less than or equal</td></tr>
+        <tr><td>==</td><td>-eq</td><td>equal to</td></tr>
+        <tr><td>!=</td><td>-ne</td><td>not equal to</td></tr>
+      </table></div>
+      <p>For string comparison use <code>=</code> and <code>!=</code> (without dash). E.g., <code>if [ "$name" = "Alice" ]</code></p>
+    </div></div>
+  </div>
+</div>
+
+<!-- ════════════════ EXP 8 ════════════════ -->
+<div class="exp" id="e8">
+  <div class="exp-hd">
+    <div class="exp-no">EXP 08</div>
+    <div class="exp-info">
+      <div class="exp-title">Advanced Shell Scripting</div>
+      <div class="exp-aim">Aim: case statement calculator, star pattern, file/directory existence check</div>
+    </div>
+  </div>
+
+  <button class="cs-btn" onclick="toggleCS(this)"><span>📋</span> Step-by-Step Cheat Sheet <span class="arr">›</span></button>
+  <div class="cs-panel">
+    <div class="step-header">
+      <span class="step-header-icon">⚡</span>
+      <div>
+        <div class="step-header-title">Advanced scripts — 3 programs to know</div>
+        <div class="step-header-sub">case statement, loops for patterns, and file testing</div>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">SCRIPT 1</span> Menu calculator using case statement</div>
+          <div class="step-cmd"><span class="g">#!/bin/bash</span>
+echo "1) Add  2) Subtract  3) Multiply  4) Divide"
+read -p "Choose (1-4): " choice
+read -p "Enter two numbers: " a b
+
+case $choice in
+  1) echo "Result: $((a + b))" ;;
+  2) echo "Result: $((a - b))" ;;
+  3) echo "Result: $((a * b))" ;;
+  4) echo "Result: $((a / b))" ;;
+  *) echo "Invalid choice!" ;;
+esac</div>
+          <div class="step-note"><code>case $variable in</code> ... <code>esac</code>. Each option ends with <code>;;</code> (two semicolons). <code>*)</code> is the default case (like else). <code>esac</code> = case backwards = end of case.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">SCRIPT 2</span> Print star triangle pattern</div>
+          <div class="step-cmd"><span class="g">#!/bin/bash</span>
+read -p "How many rows? " n
+for ((i=1; i<=n; i++)); do
+  for ((j=1; j<=i; j++)); do
+    echo -n "* "
+  done
+  echo    <span class="c"># this adds a newline after each row</span>
+done</div>
+          <div class="step-output">* 
+* * 
+* * * 
+* * * * </div>
+          <div class="step-note">Outer loop: controls which row you're on. Inner loop: controls how many stars on this row. <code>echo -n</code> prints without newline so stars stay on same line.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">SCRIPT 3</span> Check if file/directory exists, create if not</div>
+          <div class="step-cmd"><span class="g">#!/bin/bash</span>
+read -p "Enter name to check: " name
+
+if [ -f "$name" ]; then
+  echo "'$name' exists and is a FILE"
+elif [ -d "$name" ]; then
+  echo "'$name' exists and is a DIRECTORY"
+else
+  echo "'$name' does not exist. Creating it..."
+  mkdir "$name"
+  echo "Directory '$name' created!"
+fi</div>
+          <div class="step-note"><code>-f</code> checks for a FILE. <code>-d</code> checks for a DIRECTORY. These are "test flags". Always quote your variable <code>"$name"</code> in case it has spaces.</div>
+        </div>
+      </div>
+    </div>
+    <div class="cs-sub" style="margin-top:10px;">
+      <div class="cs-sub-title">All File Test Flags (used in if conditions)</div>
+      <div class="cs-row"><span class="cs-cmd">-f "$path"</span><span class="cs-desc">True if it's a regular FILE</span></div>
+      <div class="cs-row"><span class="cs-cmd">-d "$path"</span><span class="cs-desc">True if it's a DIRECTORY</span></div>
+      <div class="cs-row"><span class="cs-cmd">-e "$path"</span><span class="cs-desc">True if it EXISTS (file or directory)</span></div>
+      <div class="cs-row"><span class="cs-cmd">-r "$path"</span><span class="cs-desc">True if it's READABLE</span></div>
+      <div class="cs-row"><span class="cs-cmd">-x "$path"</span><span class="cs-desc">True if it's EXECUTABLE</span></div>
+      <div class="cs-row"><span class="cs-cmd">-s "$path"</span><span class="cs-desc">True if it exists and is NOT empty</span></div>
+    </div>
+  </div>
+
+  <div class="qa basic" data-t="case esac statement syntax default * option">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">BASIC</span><span class="qa-qt">What is a <code>case</code> statement? When should you use it instead of if-else?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p>A <code>case</code> statement matches one variable against many possible values. Use it when you have 3+ options based on the same variable — it's much cleaner than stacking if-elif-elif-elif.</p>
+<pre>case $option in
+  "yes"|"y") echo "You said yes" ;;   <span class="c"># | means OR</span>
+  "no"|"n")  echo "You said no" ;;
+  [0-9])     echo "You typed a digit" ;;   <span class="c"># pattern!</span>
+  *)         echo "Unknown input" ;;    <span class="c"># default case</span>
+esac</pre>
+    </div></div>
+  </div>
+  <div class="qa intermediate" data-t="nested loop star pattern rows columns inner outer">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">INTERMEDIATE</span><span class="qa-qt">Trace through the star pattern script for n=3. Why are there two loops?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p>The <strong>outer loop</strong> (i) controls the row number. The <strong>inner loop</strong> (j) controls how many stars to print on that row.</p>
+      <div class="tbl"><table>
+        <tr><th>i (row)</th><th>j runs 1 to i</th><th>What prints</th></tr>
+        <tr><td>1</td><td>j=1</td><td>*</td></tr>
+        <tr><td>2</td><td>j=1,2</td><td>* *</td></tr>
+        <tr><td>3</td><td>j=1,2,3</td><td>* * *</td></tr>
+      </table></div>
+      <p><code>echo -n "* "</code> doesn't add a newline, so stars stay on the same row. The plain <code>echo</code> at the end of the outer loop adds the newline to finish each row.</p>
+    </div></div>
+  </div>
+</div>
+
+<!-- ════════════════ EXP 9 ════════════════ -->
+<div class="exp" id="e9">
+  <div class="exp-hd">
+    <div class="exp-no">EXP 09</div>
+    <div class="exp-info">
+      <div class="exp-title">grep, egrep &amp; sed Commands</div>
+      <div class="exp-aim">Aim: Search files with grep/egrep; find+replace and duplicate lines with sed</div>
+    </div>
+  </div>
+
+  <button class="cs-btn" onclick="toggleCS(this)"><span>📋</span> Step-by-Step Cheat Sheet <span class="arr">›</span></button>
+  <div class="cs-panel">
+    <div class="step-header">
+      <span class="step-header-icon">🔍</span>
+      <div>
+        <div class="step-header-title">grep and sed — the most powerful text tools</div>
+        <div class="step-header-sub">First create a test file, then run each command on it</div>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">SETUP</span> Create a test file to work with</div>
+          <div class="step-cmd">cat > sample.txt << EOF
+Hello World
+This is Linux
+Linux is powerful
+hello again
+Script file: test.sh
+Image file: photo.png
+EOF</div>
+          <div class="step-note">This creates sample.txt with 6 lines. EOF means "end of file" — type it to finish. Now you have something to search in.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">GREP</span> Find lines containing a word</div>
+          <div class="step-cmd">grep "Linux" sample.txt</div>
+          <div class="step-output">This is Linux
+Linux is powerful</div>
+          <div class="step-note">Grep prints every line that contains "Linux". Case sensitive — it won't show "linux" (lowercase).</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">GREP FLAGS</span> Count lines, show line numbers, ignore case</div>
+          <div class="step-cmd">grep -c "Linux" sample.txt    <span class="c"># count matches</span>
+grep -n "Linux" sample.txt    <span class="c"># show line numbers</span>
+grep -i "hello" sample.txt    <span class="c"># case insensitive</span>
+grep -v "Linux" sample.txt    <span class="c"># lines WITHOUT Linux</span></div>
+          <div class="step-output">2
+2: This is Linux
+3: Linux is powerful
+Hello World
+hello again
+Script file: test.sh
+Image file: photo.png</div>
+          <div class="step-note">These flags are very commonly asked. Remember: <strong>-c</strong>=count, <strong>-n</strong>=number, <strong>-i</strong>=ignore case, <strong>-v</strong>=invert.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">EGREP</span> List only .sh files using egrep</div>
+          <div class="step-cmd">ls /bin/ | egrep "\.sh$"
+egrep "\.sh$|\.png$" sample.txt</div>
+          <div class="step-output">Script file: test.sh</div>
+          <div class="step-note"><code>egrep</code> = extended grep. The <code>|</code> means OR (show .sh OR .png). The <code>$</code> means "ends with". The <code>\.</code> is a literal dot (. alone means "any character" in regex).</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">WC + GREP</span> Count words, lines, characters using wc</div>
+          <div class="step-cmd">wc sample.txt
+wc -l sample.txt   <span class="c"># lines only</span>
+wc -w sample.txt   <span class="c"># words only</span>
+wc -c sample.txt   <span class="c"># bytes only</span></div>
+          <div class="step-output"> 6  17  90  sample.txt</div>
+          <div class="step-note">Output is: <strong>lines words bytes filename</strong>. The experiment asks you to count all three using grep/wc in a script.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">SED REPLACE</span> Replace a word everywhere in a file</div>
+          <div class="step-cmd">sed 's/Linux/UNIX/g' sample.txt        <span class="c"># see on screen</span>
+sed -i 's/Linux/UNIX/g' sample.txt    <span class="c"># change the actual file</span></div>
+          <div class="step-note"><code>s/old/new/g</code> = substitute old with new, globally (all occurrences). Without <code>-i</code> it just prints the result — the actual file is unchanged. With <code>-i</code> it modifies the file in place.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">7</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">SED DUPLICATE</span> Print each line twice (duplicated output)</div>
+          <div class="step-cmd">sed -n 'p;p' sample.txt</div>
+          <div class="step-output">Hello World
+Hello World
+This is Linux
+This is Linux ...</div>
+          <div class="step-note"><code>-n</code> = suppress auto-printing. The first <code>p</code> prints the line once, the second <code>p</code> prints it again. Result: every line appears twice.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa basic" data-t="grep stands for global regular expression print search">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">BASIC</span><span class="qa-qt">What does grep stand for and what does it do?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p><strong>grep</strong> = Global Regular Expression Print. It searches through file(s) line by line and prints every line that matches your search pattern.</p>
+<pre>grep "error" log.txt         <span class="c"># find all lines with "error"</span>
+grep -i "error" log.txt      <span class="c"># same but case-insensitive</span>
+grep -c "error" log.txt      <span class="c"># just show the COUNT of matches</span>
+grep -n "error" log.txt      <span class="c"># show line numbers too</span>
+grep -v "error" log.txt      <span class="c"># show lines WITHOUT "error"</span></pre>
+    </div></div>
+  </div>
+  <div class="qa intermediate" data-t="sed stream editor substitute replace -i in place file modify">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">INTERMEDIATE</span><span class="qa-qt">What is sed? What is the difference between <code>sed 's/old/new/g'</code> and <code>sed -i 's/old/new/g'</code>?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p><strong>sed</strong> = Stream Editor. It processes text line by line and applies changes. Without <code>-i</code>, it only shows the result on screen — the actual file is NOT changed. With <code>-i</code>, it edits the actual file.</p>
+<pre>sed 's/cat/dog/g' pets.txt       <span class="c"># shows changed output on screen</span>
+<span class="c"># pets.txt still has "cat" in it!</span>
+
+sed -i 's/cat/dog/g' pets.txt    <span class="c"># actually changes pets.txt</span>
+<span class="c"># pets.txt now has "dog" everywhere</span></pre>
+    </div></div>
+  </div>
+</div>
+
+<!-- ════════════════ EXP 10 ════════════════ -->
+<div class="exp" id="e10">
+  <div class="exp-hd">
+    <div class="exp-no">EXP 10</div>
+    <div class="exp-info">
+      <div class="exp-title">AWK &amp; Perl Scripting</div>
+      <div class="exp-aim">Aim: AWK for even numbers &amp; Fibonacci; Perl for sorting arrays and prime check</div>
+    </div>
+  </div>
+
+  <button class="cs-btn" onclick="toggleCS(this)"><span>📋</span> Step-by-Step Cheat Sheet <span class="arr">›</span></button>
+  <div class="cs-panel">
+    <div class="step-header">
+      <span class="step-header-icon">🦅</span>
+      <div>
+        <div class="step-header-title">AWK and Perl — the 4 programs you need to know</div>
+        <div class="step-header-sub">Write each in vi, chmod +x, then run with ./filename</div>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">AWK PROG 1</span> Print even numbers in a range</div>
+          <div class="step-cmd"><span class="c"># Save as even.sh, then run it</span>
+<span class="g">#!/bin/bash</span>
+read -p "Start: " s
+read -p "End:   " e
+awk -v start=$s -v end=$e 'BEGIN {
+  for (i = start; i <= end; i++) {
+    if (i % 2 == 0)
+      print i
+  }
+}'</div>
+          <div class="step-output">2  4  6  8  10  (if you entered 1 to 10)</div>
+          <div class="step-note"><code>-v start=$s</code> passes shell variable <code>$s</code> into AWK as variable <code>start</code>. AWK runs the code inside <code>BEGIN{ }</code> once before reading any input. <code>%</code> is modulus (remainder after division) — even numbers have remainder 0 when divided by 2.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">AWK PROG 2</span> Fibonacci series</div>
+          <div class="step-cmd"><span class="g">#!/bin/bash</span>
+read -p "How many terms? " n
+awk -v n=$n 'BEGIN {
+  a = 0
+  b = 1
+  for (i = 1; i <= n; i++) {
+    print a
+    temp = a + b
+    a = b
+    b = temp
+  }
+}'</div>
+          <div class="step-output">0  1  1  2  3  5  8  13 ... (for n=8)</div>
+          <div class="step-note">Fibonacci: each number = sum of previous two. Start with a=0, b=1. Each step: print a, then calculate next term by swapping. The <code>temp</code> variable is needed to avoid losing the old value of a.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">PERL PROG 1</span> Sort elements of an array</div>
+          <div class="step-cmd"><span class="c"># Save as sort.pl</span>
+<span class="g">#!/usr/bin/perl</span>
+use strict;
+use warnings;
+
+my @nums = (15, 3, 9, 1, 22, 7);
+
+print "Original: @nums\n";
+
+my @sorted = sort { $a &lt;=&gt; $b } @nums;
+
+print "Sorted:   @sorted\n";</div>
+          <div class="step-output">Original: 15 3 9 1 22 7
+Sorted:   1 3 7 9 15 22</div>
+          <div class="step-note">Run with: <code>perl sort.pl</code>. The <code>&lt;=&gt;</code> (spaceship) operator does numeric comparison. Without it, 10 would come before 2 (alphabetical order). Arrays in Perl start with <code>@</code>, scalar variables with <code>$</code>.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">PERL PROG 2</span> Check if a number is prime</div>
+          <div class="step-cmd"><span class="c"># Save as prime.pl</span>
+<span class="g">#!/usr/bin/perl</span>
+print "Enter a number: ";
+my $n = &lt;STDIN&gt;;
+chomp $n;          <span class="c"># remove the Enter key (\n) from input</span>
+
+my $prime = 1;
+if ($n &lt; 2) {
+  $prime = 0;
+} else {
+  for (my $i = 2; $i * $i &lt;= $n; $i++) {
+    if ($n % $i == 0) {
+      $prime = 0;
+      last;          <span class="c"># stop checking, it's not prime</span>
+    }
+  }
+}
+
+if ($prime) {
+  print "$n is Prime\n";
+} else {
+  print "$n is Not Prime\n";
+}</div>
+          <div class="step-note"><code>&lt;STDIN&gt;</code> reads user input. <code>chomp</code> removes the trailing newline that comes with keyboard input. Loop only goes up to √n for efficiency. <code>last</code> breaks out of the loop immediately.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa basic" data-t="awk what is text processing $1 $2 NF NR column field">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">BASIC</span><span class="qa-qt">What is AWK? What are <code>$1</code>, <code>NF</code>, and <code>NR</code>?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p><strong>AWK</strong> is a text processing tool. It reads each line and splits it into fields (columns) separated by spaces. It's named after its authors: Aho, Weinberger, Kernighan.</p>
+      <div class="tbl"><table>
+        <tr><th>Variable</th><th>What it holds</th><th>Example (for line "John 25 Mumbai")</th></tr>
+        <tr><td>$0</td><td>Entire current line</td><td>John 25 Mumbai</td></tr>
+        <tr><td>$1</td><td>First field</td><td>John</td></tr>
+        <tr><td>$2</td><td>Second field</td><td>25</td></tr>
+        <tr><td>$3</td><td>Third field</td><td>Mumbai</td></tr>
+        <tr><td>NF</td><td>Number of Fields on this line</td><td>3</td></tr>
+        <tr><td>NR</td><td>Number of current Row (line number)</td><td>1 for first line, 2 for second...</td></tr>
+      </table></div>
+    </div></div>
+  </div>
+  <div class="qa intermediate" data-t="perl chomp STDIN input newline remove">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">INTERMEDIATE</span><span class="qa-qt">Why do we use <code>chomp</code> in Perl after reading input?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p>When the user types something and presses Enter, Perl gets the text <em>plus</em> the Enter key (which is the newline character <code>\n</code>). So if user types <code>5</code>, Perl stores <code>"5\n"</code>.</p>
+      <p><code>chomp</code> removes that trailing newline. Without it, comparisons and printing can give weird results (extra blank lines, comparisons failing).</p>
+<pre>my $n = &lt;STDIN&gt;;    <span class="c"># user types 5 → $n = "5\n"</span>
+chomp $n;           <span class="c"># now $n = "5"  (clean)</span></pre>
+    </div></div>
+  </div>
+</div>
+
+<!-- ════════════════ EXP 11 ════════════════ -->
+<div class="exp" id="e11">
+  <div class="exp-hd">
+    <div class="exp-no">EXP 11</div>
+    <div class="exp-info">
+      <div class="exp-title">Symbolic Links &amp; Hard Links</div>
+      <div class="exp-aim">Aim: Create symlinks and hardlinks, then observe what happens when original is deleted</div>
+    </div>
+  </div>
+
+  <button class="cs-btn" onclick="toggleCS(this)"><span>📋</span> Step-by-Step Cheat Sheet <span class="arr">›</span></button>
+  <div class="cs-panel">
+    <div class="step-header">
+      <span class="step-header-icon">🔗</span>
+      <div>
+        <div class="step-header-title">Create links and test deleting original</div>
+        <div class="step-header-sub">This is a demo experiment — just run these commands in order</div>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">SETUP</span> Create an original file</div>
+          <div class="step-cmd">echo "This is the original content" > original.txt
+cat original.txt</div>
+          <div class="step-output">This is the original content</div>
+          <div class="step-note">We'll create both a symlink and a hardlink pointing to this file, then delete it and see what happens.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">SYMLINK</span> Create a symbolic (soft) link</div>
+          <div class="step-cmd">ln -s original.txt symlink.txt
+ls -l</div>
+          <div class="step-output">-rw-r--r-- 1 student student 29 ... original.txt
+lrwxrwxrwx 1 student student 12 ... symlink.txt -> original.txt</div>
+          <div class="step-note">Notice: symlink shows <code>l</code> at the start of permissions and shows <code>-> original.txt</code>. It's just a pointer to the original file's location.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">HARDLINK</span> Create a hard link</div>
+          <div class="step-cmd">ln original.txt hardlink.txt
+ls -li</div>
+          <div class="step-output">12345 -rw-r--r-- 2 student ... original.txt
+12345 -rw-r--r-- 2 student ... hardlink.txt</div>
+          <div class="step-note">The <code>-i</code> flag shows inode numbers. Both original.txt and hardlink.txt have the <strong>same inode number (12345)</strong> — they point to the exact same data on disk. The "2" means 2 hard links exist.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge warn-badge">THE KEY TEST</span> Delete the original and see what happens</div>
+          <div class="step-cmd">rm original.txt
+
+cat symlink.txt    <span class="c"># test symlink after deletion</span>
+cat hardlink.txt   <span class="c"># test hardlink after deletion</span></div>
+          <div class="step-output">cat: symlink.txt: No such file or directory   ← BROKEN!
+This is the original content              ← STILL WORKS!</div>
+          <div class="step-note">This is the most important result of the experiment. <strong>Symlink breaks</strong> because its target file is gone. <strong>Hardlink still works</strong> because it references the actual data directly — the data only gets deleted when ALL hardlinks to it are gone.</div>
+        </div>
+      </div>
+    </div>
+    <div class="cs-sub" style="margin-top:10px;">
+      <div class="cs-sub-title">Symlink vs Hardlink — Summary (examiner WILL ask this)</div>
+      <div class="step-cmd">                 <span class="y">Soft/Symbolic Link</span>     <span class="g">Hard Link</span>
+Created with:    ln -s source link      ln source link
+What it is:      Pointer to file path   Direct reference to data
+Inode:           Different inode        SAME inode as original
+If original      Link is BROKEN          Data still accessible
+  is deleted:    (dangling symlink)     (survives!)
+Can cross disk:  YES                     NO (same disk only)</div>
+    </div>
+  </div>
+
+  <div class="qa basic" data-t="symlink symbolic link what is pointer ln -s soft">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">BASIC</span><span class="qa-qt">What is a symbolic link? Give a simple real-world analogy.</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p>A <strong>symbolic link</strong> is like a <em>shortcut on Windows Desktop</em>. It's a small file that just contains the path to the real file. When you open the shortcut, the OS follows the path and opens the real file.</p>
+      <p>Key behaviour: if you delete the original file, the shortcut still exists but it leads nowhere (broken shortcut).</p>
+<pre>ln -s /home/alice/documents/report.pdf my_report.pdf
+<span class="c"># my_report.pdf is a shortcut to the actual report</span>
+<span class="c"># They show the same content</span>
+<span class="c"># Delete report.pdf → my_report.pdf is broken</span></pre>
+    </div></div>
+  </div>
+  <div class="qa intermediate" data-t="inode hard link same data block reference count filesystem">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">INTERMEDIATE</span><span class="qa-qt">What is an inode? Why do hardlinks share the same inode?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p>An <strong>inode</strong> is a record on disk that stores a file's information: size, permissions, owner, timestamps, and location of actual data on disk. It does NOT store the filename.</p>
+      <p>A hard link creates a <em>new directory entry pointing to the same inode</em>. Both filenames refer to the same data. When you delete a filename, you reduce the inode's "link count" by 1. The data is actually deleted only when link count reaches 0 (no more names pointing to it).</p>
+      <div class="tip-box">⚡ <span>Think of an inode as a house (the data). Hard links are different addresses for the same house. Destroying one address doesn't demolish the house — you need to destroy ALL addresses first.</span></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ════════════════ EXP 12 ════════════════ -->
+<div class="exp" id="e12">
+  <div class="exp-hd">
+    <div class="exp-no">EXP 12</div>
+    <div class="exp-info">
+      <div class="exp-title">Task Scheduling — crontab</div>
+      <div class="exp-aim">Aim: Schedule a script to run automatically using crontab; automate system health monitoring</div>
+    </div>
+  </div>
+
+  <button class="cs-btn" onclick="toggleCS(this)"><span>📋</span> Step-by-Step Cheat Sheet <span class="arr">›</span></button>
+  <div class="cs-panel">
+    <div class="step-header">
+      <span class="step-header-icon">⏰</span>
+      <div>
+        <div class="step-header-title">Schedule a task to run automatically</div>
+        <div class="step-header-sub">crontab lets you set "run this script every 5 minutes" — the OS does it automatically</div>
+      </div>
+    </div>
+    <div class="steps-wrap">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">UNDERSTAND</span> The 5-field cron time syntax</div>
+          <div class="step-cmd"><span class="c">Position:  MIN   HOUR   DAY   MONTH   WEEKDAY</span>
+<span class="c">Range:     0-59  0-23  1-31   1-12    0-7</span>
+<span class="c">
+* means "every value" (every minute, every hour, etc.)</span>
+
+<span class="c">Examples:</span>
+*  *  *  *  *   <span class="c"># every single minute</span>
+0  *  *  *  *   <span class="c"># every hour at minute 0</span>
+0  9  *  *  *   <span class="c"># every day at 9:00 AM</span>
+*/5 20 *  *  *  <span class="c"># every 5 min during 8 PM hour</span>
+0  0  1  *  *   <span class="c"># midnight on 1st of each month</span></div>
+          <div class="step-note">The format from the experiment: <code>*/5 20 * * *</code> means every 5 minutes, during hour 20 (8 PM), every day, every month.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">WRITE SCRIPT</span> Create the script to be scheduled</div>
+          <div class="step-cmd">vi /home/student/create_file.sh</div>
+          <div class="step-cmd"><span class="g">#!/bin/bash</span>
+<span class="c"># This script creates a file with current timestamp</span>
+touch /home/student/Desktop/crontest_$(date +%s).txt
+echo "Script ran at $(date)" >> /home/student/cronlog.txt</div>
+          <div class="step-note">After writing, press Esc then :wq to save. The <code>$(date +%s)</code> creates a unique filename using Unix timestamp so each run creates a new file.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">PERMISSION</span> Make the script executable</div>
+          <div class="step-cmd">chmod +x /home/student/create_file.sh</div>
+          <div class="step-note"><strong>Always required.</strong> If you forget this step, cron will say "permission denied" and the job won't run.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">ADD JOB</span> Edit crontab to schedule the script</div>
+          <div class="step-cmd">crontab -e</div>
+          <div class="step-note">This opens a text editor (usually nano or vi). Add this line at the bottom:<br>
+          <code>*/5 20 * * * /home/student/create_file.sh</code><br>
+          Save and exit. Cron will now run it every 5 minutes during hour 20.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge see-badge">VERIFY</span> Check your scheduled jobs</div>
+          <div class="step-cmd">crontab -l</div>
+          <div class="step-output">*/5 20 * * * /home/student/create_file.sh</div>
+          <div class="step-note">Shows all your scheduled cron jobs. Wait 5 minutes, then check your Desktop — you should see new files appearing. Also check <code>cat /home/student/cronlog.txt</code> to see the log.</div>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="step-what"><span class="badge type-badge">BONUS</span> Health monitoring script (system monitoring task)</div>
+          <div class="step-cmd"><span class="g">#!/bin/bash</span>
+LOG="/home/student/health.log"
+echo "=== $(date) ===" >> $LOG
+echo "CPU idle: $(top -bn1|grep 'Cpu'|awk '{print $8}')%" >> $LOG
+echo "RAM free: $(free -m|awk 'NR==2{print $4}') MB" >> $LOG
+echo "Disk used: $(df -h /|awk 'NR==2{print $5}')" >> $LOG</div>
+          <div class="step-note">Add to crontab as: <code>*/10 * * * * /home/student/health.sh</code> to run every 10 minutes and log system stats.</div>
+        </div>
+      </div>
+    </div>
+    <div class="cs-warn" style="margin-top:8px;">⚠ <span><strong>Most common reason cron doesn't work:</strong> You used a relative path like <code>./script.sh</code> in crontab. Cron doesn't know your current directory. ALWAYS use the full path like <code>/home/student/script.sh</code></span></div>
+  </div>
+
+  <div class="qa basic" data-t="cron crontab what is daemon task scheduler automatic">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">BASIC</span><span class="qa-qt">What is cron? What is crontab?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p><strong>cron</strong> is a background service (daemon) running all the time that executes scheduled tasks at specific times. It's like an alarm clock built into Linux.</p>
+      <p><strong>crontab</strong> is your personal schedule file where you write what to run and when. Each user has their own crontab. The cron daemon reads everyone's crontab files and runs the jobs at the right time.</p>
+      <p>Real-world use: automatic database backups at midnight, sending reports every Monday morning, clearing temp files every week.</p>
+    </div></div>
+  </div>
+  <div class="qa basic" data-t="crontab syntax 5 fields minute hour day month weekday decode">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">BASIC</span><span class="qa-qt">What does <code>30 8 * * 1 /backup.sh</code> mean in crontab?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <div class="tbl"><table>
+        <tr><th>Field</th><th>Value</th><th>Means</th></tr>
+        <tr><td>Minute</td><td>30</td><td>At minute 30</td></tr>
+        <tr><td>Hour</td><td>8</td><td>At hour 8 (8 AM)</td></tr>
+        <tr><td>Day of Month</td><td>*</td><td>Every day of month</td></tr>
+        <tr><td>Month</td><td>*</td><td>Every month</td></tr>
+        <tr><td>Day of Week</td><td>1</td><td>Only on Monday (0=Sun, 1=Mon, ... 7=Sun)</td></tr>
+        <tr><td>Command</td><td>/backup.sh</td><td>Script to run</td></tr>
+      </table></div>
+      <p>Result: Runs /backup.sh at 8:30 AM every Monday.</p>
+    </div></div>
+  </div>
+  <div class="qa intermediate" data-t="cron job not running debug full path environment variable">
+    <div class="qa-q" onclick="tog(this)"><span class="lvl">INTERMEDIATE</span><span class="qa-qt">Your cron job isn't running even though the crontab entry looks right. What should you check?</span><span class="chev">›</span></div>
+    <div class="qa-a"><div class="qa-body">
+      <p>Most common reasons cron jobs fail silently:</p>
+      <p><strong>1. Relative paths</strong> — cron has no working directory. Use <code>/home/user/script.sh</code> not <code>./script.sh</code>.</p>
+      <p><strong>2. No execute permission</strong> — did you run <code>chmod +x script.sh</code>? Test with <code>ls -l script.sh</code> — should show <code>x</code> in permissions.</p>
+      <p><strong>3. Script has errors</strong> — test it manually first: <code>bash /home/user/script.sh</code>. If it doesn't work manually, it won't work in cron.</p>
+      <p><strong>4. Check cron logs</strong>: <code>grep CRON /var/log/syslog</code></p>
+    </div></div>
+  </div>
+</div>
+
+<div id="no-results">
+  <div style="font-size:32px; margin-bottom:10px; color:var(--text3);">◌</div>
+  No questions match. Try different keywords.
+</div>
+
+</div><!-- end main -->
+<div class="footer">UNIX LAB — BEGINNER STEP-BY-STEP GUIDE · SE IT SEM IV · 2025-26 · A.P. SHAH INSTITUTE OF TECHNOLOGY</div>
+
+<script>
+let af = 'all';
+function tog(el) {
+  const c = el.closest('.qa');
+  const was = c.classList.contains('open');
+  document.querySelectorAll('.qa.open').forEach(x => x.classList.remove('open'));
+  if (!was) c.classList.add('open');
+}
+function toggleCS(btn) {
+  const panel = btn.nextElementSibling;
+  const isOpen = panel.classList.contains('open');
+  panel.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open-btn', !isOpen);
+  const arrow = btn.querySelector('.arr');
+  arrow.style.transform = isOpen ? '' : 'rotate(90deg)';
+  btn.firstChild.nextSibling.textContent = isOpen ? ' Step-by-Step Cheat Sheet ' : ' Close Cheat Sheet ';
+}
+function setF(f, btn) {
+  af = f;
+  document.querySelectorAll('.tb').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterAll();
+}
+function filterAll() {
+  const q = document.getElementById('srch').value.toLowerCase().trim();
+  let any = false;
+  document.querySelectorAll('.qa').forEach(card => {
+    const dm = af === 'all' || card.classList.contains(af);
+    const tm = !q
+      || (card.dataset.t || '').includes(q)
+      || card.querySelector('.qa-qt').textContent.toLowerCase().includes(q)
+      || (card.querySelector('.qa-body') || {}).textContent?.toLowerCase().includes(q);
+    const show = dm && tm;
+    card.classList.toggle('hidden', !show);
+    if (!show) card.classList.remove('open');
+    if (show) any = true;
+  });
+  document.querySelectorAll('.exp').forEach(s => {
+    const vis = [...s.querySelectorAll('.qa')].some(c => !c.classList.contains('hidden'));
+    s.classList.toggle('hidden', !vis);
+  });
+  document.getElementById('no-results').style.display = any ? 'none' : 'block';
+}
+</script>
+</body>
+</html>
